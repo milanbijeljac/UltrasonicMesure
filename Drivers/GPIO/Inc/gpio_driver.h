@@ -91,17 +91,16 @@ namespace Driver
 
 		/** Method used to deinitialize port */
 		void GPIO_v_DeInit();
-		/** Method used to enable RCC for GPIOx */
-		void GPIO_v_RCCEnable();
 		/** Method used to disable RCC for GPIOx */
-		void GPIO_v_RCCDisable();
-
+		void GPIO_v_DisableClock();
 		/** Method used to toggle pin */
 		void GPIO_v_TogglePin(GPIO_TypeDef *port, GpioPin m_GpioPin);
 
 		~GPIO() = default;
+
 	private:
 		void GPIO_v_Init();
+		void GPIO_v_EnableClock();
 		void GPIO_v_ModerConfig();
 		void GPIO_v_SpeedConfig();
 		void GPIO_v_PupdrConfig();

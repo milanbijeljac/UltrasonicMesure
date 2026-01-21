@@ -1,7 +1,6 @@
 #include <math.h>
 #include "gpio_driver.h"
 #include "stm32f072x8.h"
-#include "types.h"
 
 /* Macros used for clearing bit fields */
 #define CLEAR_1_BIT					1u
@@ -16,6 +15,7 @@ namespace Driver
 
 	void GPIO::GPIO_v_Init()
 	{
+		GPIO::GPIO_v_EnableClock();
 		GPIO::GPIO_v_ModerConfig();
 		GPIO::GPIO_v_SpeedConfig();
 		GPIO::GPIO_v_PupdrConfig();
@@ -28,46 +28,12 @@ namespace Driver
 
 	void GPIO::GPIO_v_DeInit()
 	{
-		if(m_port == GPIOA)
-		{
-			/* Reset GPIOA peripheral, bit position 17 at RCC_AHBSTR register */
-			RCC->AHBRSTR |= 1u << 17u;
-			RCC->AHBRSTR &= ~(1u << 17u);
-		}
-		else if(m_port == GPIOB)
-		{
-			/* Reset GPIOB peripheral, bit position 18 at RCC_AHBSTR register */
-			RCC->AHBRSTR |= 1u << 18u;
-			RCC->AHBRSTR &= ~(1u << 18u);
-		}
-		else if(m_port == GPIOC)
-		{
-			/* Reset GPIOC peripheral, bit position 19 at RCC_AHBSTR register */
-			RCC->AHBRSTR |= 1u << 19u;
-			RCC->AHBRSTR &= ~(1u << 19u);
-		}
-		else if(m_port == GPIOD)
-		{
-			/* Reset GPIOD peripheral, bit position 20 at RCC_AHBSTR register */
-			RCC->AHBRSTR |= 1u << 20u;
-			RCC->AHBRSTR &= ~(1u << 20u);
-		}
-		else if(m_port == GPIOE)
-		{
-			/* Reset GPIOE peripheral, bit position 21 at RCC_AHBSTR register */
-			RCC->AHBRSTR |= 1u << 21u;
-			RCC->AHBRSTR &= ~(1u << 21u);
-		}
-		else if(m_port == GPIOF)
-		{
-			/* Reset GPIOF peripheral, bit position 22 at RCC_AHBSTR register */
-			RCC->AHBRSTR |= 1u << 22u;
-			RCC->AHBRSTR &= ~(1u << 22u);
-		}
-		else
-		{
-			/* Do nothing */
-		}
+		if(this->m_port == GPIOA) { (RCC->AHBENR &= ~(1u << 17u)); }
+		if(this->m_port == GPIOB) { (RCC->AHBENR &= ~(1u << 18u)); }
+		if(this->m_port == GPIOC) { (RCC->AHBENR &= ~(1u << 19u)); }
+		if(this->m_port == GPIOD) { (RCC->AHBENR &= ~(1u << 20u)); }
+		if(this->m_port == GPIOE) { (RCC->AHBENR &= ~(1u << 21u)); }
+		if(this->m_port == GPIOF) { (RCC->AHBENR &= ~(1u << 22u)); }
 	}
 
 	void GPIO::GPIO_v_ModerConfig()
@@ -182,7 +148,7 @@ namespace Driver
 		return u_retVal;
 	}
 
-	void GPIO::GPIO_v_RCCEnable()
+	void GPIO::GPIO_v_EnableClock()
 	{
 		if(this->m_port == GPIOA) { (RCC->AHBENR |= (1u << 17u)); }
 		if(this->m_port == GPIOB) { (RCC->AHBENR |= (1u << 18u)); }
@@ -191,15 +157,4 @@ namespace Driver
 		if(this->m_port == GPIOE) { (RCC->AHBENR |= (1u << 21u)); }
 		if(this->m_port == GPIOF) { (RCC->AHBENR |= (1u << 22u)); }
 	};
-
-	void GPIO::GPIO_v_RCCDisable()
-	{
-		if(this->m_port == GPIOA) { (RCC->AHBENR &= ~(1u << 17u)); }
-		if(this->m_port == GPIOB) { (RCC->AHBENR &= ~(1u << 18u)); }
-		if(this->m_port == GPIOC) { (RCC->AHBENR &= ~(1u << 19u)); }
-		if(this->m_port == GPIOD) { (RCC->AHBENR &= ~(1u << 20u)); }
-		if(this->m_port == GPIOE) { (RCC->AHBENR &= ~(1u << 21u)); }
-		if(this->m_port == GPIOF) { (RCC->AHBENR &= ~(1u << 22u)); }
-	}
-
 }
