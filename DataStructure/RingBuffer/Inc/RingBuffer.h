@@ -1,0 +1,142 @@
+#pragma once
+
+#include <stdint.h>
+#include <memory>
+
+typedef uint8_t uint8;
+typedef uint16_t uint16;
+
+namespace DataStructure
+{
+	/** Class ring buffer. Data can be both on stack and heap */
+	template <typename T>
+	class RingBuffer
+	{
+	public:
+		static bool createObj(uint8 size, T* elementStorage, void* objectStorage, RingBuffer*& out)
+		{
+			/* Check if size exceeds uint8 and if memory location is nullptr */
+			if (size == 0 || size > 255 || elementStorage == nullptr)
+			{
+				out = nullptr;
+				return false;
+			}
+
+			out = new (objectStorage) RingBuffer(size, elementStorage); /* Placement new - construct only object at give memory address (objectStorage) */
+																		/* With this user determines if object is on heap or stack */
+			return true;
+		}
+
+		void destroyObj()
+		{
+			this->~RingBuffer();
+		}
+		/** Getter for available bytes to read */
+		uint8 RingBuffer_u_GetMaxReadSize() const { return m_size - m_MaxBytesToWrite; }
+
+		/** Getter for read index */
+		uint8 RingBuffer_u_GetReadIndex() const { return m_readIndex; }
+
+		/** Getter for write index */
+		uint8 RingBuffer_u_GetWriteIndex() const { return m_writeIndex; }
+
+		/**
+		 *
+		 * \brief      - Method used to push elements to ring buffer.
+		 * \param[in]  - const T* data - pointer to data that needs to be pushed to buffer
+		 * \param[in]  - uint8 size - size of data
+		 * \return     - NONE
+		 *
+		 */
+		void RingBuffer_v_WriteElement(const T* data, uint8 size)
+		{
+			uint8 i;
+
+			if ((RingBuffer::m_fullCircle == 1u) && (RingBuffer::m_writeIndex == RingBuffer::m_readIndex))
+			{
+				/* ERROR - Overwrite attempt error */
+
+			}
+			else if ((size > RingBuffer::m_MaxBytesToWrite) || (size > RingBuffer::m_size))
+			{
+				/* ERROR - Write limit exceeded */
+			}
+			else
+			{
+				for (i = 0; i < size; i++)
+				{
+					if (RingBuffer::m_writeIndex == RingBuffer::m_size)
+					{
+						RingBuffer::m_writeIndex = 0u;
+						RingBuffer::m_fullCircle = 1u;
+					}
+
+					RingBuffer::buffer[RingBuffer::m_writeIndex] = *data;
+					data++;
+					RingBuffer::m_writeIndex++;
+					RingBuffer::m_MaxBytesToWrite--;
+				}
+			}
+		}
+
+		/**
+		 *
+		 * \brief      - Method used to pop elements from ring buffer.
+		 * \param[in]  - const T* data - pointer to data in which data from read buffer is stored
+		 * \param[in]  - uint8 size - size to read
+		 * \return     - NONE
+		 *
+		 */
+		void RingBuffer_v_ReadElement(T* data, uint8 size)
+		{
+			uint8 i;
+			uint8 u_readLength = 0u;
+
+			u_readLength = RingBuffer::RingBuffer_u_GetMaxReadSize();
+
+			if (size > u_readLength)
+			{
+				if ((m_writeIndex == m_readIndex) && m_fullCircle != 1)
+				{
+
+				}
+				else
+				{
+					/* ERROR - read size exceeded */
+				}
+
+			}
+			else
+			{
+				for (i = 0; i < size; i++)
+				{
+					if (RingBuffer::m_readIndex == RingBuffer::m_size)
+					{
+						RingBuffer::m_readIndex = 0u;
+						RingBuffer::m_fullCircle = 0u;
+					}
+
+					*data = RingBuffer::buffer[RingBuffer::m_readIndex];
+					data++;
+					RingBuffer::m_readIndex++;
+					RingBuffer::m_MaxBytesToWrite++;
+				}
+
+			}
+		}
+
+	private:
+
+		RingBuffer(uint8 size, T* storage) : buffer(storage), m_MaxBytesToWrite(size), m_size(size) {}
+
+		~RingBuffer() = default;
+
+	private:
+		uint8 m_writeIndex{ 0 };
+		uint8 m_readIndex{ 0 };
+		uint8 m_fullCircle{ 0 };
+		uint8 m_MaxBytesToWrite;
+		uint8 m_size;
+		T* buffer;
+	};
+}
