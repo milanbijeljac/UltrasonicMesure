@@ -122,14 +122,14 @@ namespace Driver
 		if(static_cast<uint8>(m_GpioPin) <= PIN_SEPARATION)
 		{
 			/* Perform clear bit operation */
-			m_port->AFR[0] &= ~(CLEAR_4_BITS << (static_cast<uint8>(m_GpioPin) * 2));
+			m_port->AFR[0] &= ~(CLEAR_2_BITS << (static_cast<uint8>(m_GpioPin) * 2));
 			m_port->AFR[0] |= static_cast<uint8>(m_AlternateFunctionality) << (static_cast<uint8>(m_GpioPin) * 4);
 
 		}
 		else if(static_cast<uint8>(m_GpioPin) > PIN_SEPARATION)
 		{
 			/* Perform clear bit operation */
-			m_port->AFR[1] &= ~(CLEAR_4_BITS << (static_cast<uint8>(m_GpioPin) * 2));
+			m_port->AFR[1] &= ~(CLEAR_2_BITS << (static_cast<uint8>(m_GpioPin) * 2));
 			m_port->AFR[1] |= static_cast<uint8>(m_AlternateFunctionality) << ((static_cast<uint8>(m_GpioPin) - 8u) * 4);
 		}
 	}
