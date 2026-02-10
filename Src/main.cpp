@@ -19,19 +19,76 @@
 #include <stdint.h>
 #include "RingBuffer.h"
 #include "gpio_driver.h"
+#include "usart_driver.h"
+#include "tim_driver.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
-alignas(DataStructure::RingBuffer<uint16>) uint8 ringBufferObjMemory[sizeof(DataStructure::RingBuffer<uint16>)];
-uint16 ringBuffer[5];
-DataStructure::RingBuffer<uint16>* rb = nullptr;
+//extern void initialise_monitor_handles(void);
 
+
+static void PLL_Enable(uint32 pllInputMultyply)
+{
+	/* Enable HSI oscillator */
+	RCC->CR |= RCC_CR_HSION;
+
+	/* Wait for HSI oscillator to stabilize */
+	while(!(RCC->CR & RCC_CR_HSIRDY));
+
+	/* Configure PLL */
+	RCC->CFGR &= ~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLMUL);
+	RCC->CFGR |= RCC_CFGR_PLLSRC_HSI_Div2 | pllInputMultyply;
+
+	/* Enable PLL */
+	RCC->CR |= RCC_CR_PLLON;
+
+	/* Wait for PLL to lock */
+	while(!(RCC->CR & RCC_CR_PLLRDY));
+
+	/* Switch system clock to PLL */
+	RCC->CFGR &= ~RCC_CFGR_SW;
+	RCC->CFGR |= RCC_CFGR_SW_PLL;
+
+	/* Wait for system clock switch */
+	while((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL);
+}
+
+uint8_t txData = 1;
+uint8_t startOfData = 0xDE;
+uint8_t endOfData = 0xAD;
 
 int main()
 {
-    /* Loop forever */
+	//initialise_monitor_handles();
 
-	for(;;);
+	PLL_Enable(RCC_CFGR_PLLMUL4);
+
+	Driver::TIM timer(TIM3, 16);
+
+	Driver::GPIO gpioa2(GPIOA, Driver::GPIO::GpioPin::P2, Driver::GPIO::Mode::AlternateFunctionMode,
+			Driver::GPIO::Speed::HighSpeed, Driver::GPIO::PullUpDown::NoPull, Driver::GPIO::OutputType::PushPull
+			, Driver::GPIO::AlternateFunctionality::AF1);
+
+	Driver::GPIO gpioa3(GPIOA, Driver::GPIO::GpioPin::P3, Driver::GPIO::Mode::AlternateFunctionMode,
+				Driver::GPIO::Speed::HighSpeed, Driver::GPIO::PullUpDown::NoPull, Driver::GPIO::OutputType::PushPull
+				, Driver::GPIO::AlternateFunctionality::AF1);
+
+	Driver::USART usart(USART2, 16000000, 115200);
+
+    /* Loop forever */
+    int i;
+	while(1)
+	{
+
+		usart.USART_v_WriteByte(startOfData);
+	    for(i = 0; i < 13; i++)
+	    {
+	    	usart.USART_v_WriteByte(txData);
+	    	txData++;
+	    	timer.Delay_v_ms(20);
+	    }
+	    usart.USART_v_WriteByte(endOfData);
+	}
 }
