@@ -28,12 +28,12 @@ namespace Driver
 
 	void GPIO::GPIO_v_DeInit()
 	{
-		if(this->m_port == GPIOA) { (RCC->AHBENR &= ~(1u << 17u)); }
-		if(this->m_port == GPIOB) { (RCC->AHBENR &= ~(1u << 18u)); }
-		if(this->m_port == GPIOC) { (RCC->AHBENR &= ~(1u << 19u)); }
-		if(this->m_port == GPIOD) { (RCC->AHBENR &= ~(1u << 20u)); }
-		if(this->m_port == GPIOE) { (RCC->AHBENR &= ~(1u << 21u)); }
-		if(this->m_port == GPIOF) { (RCC->AHBENR &= ~(1u << 22u)); }
+		if(m_port == GPIOA) { RCC->AHBENR &= ~RCC_AHBENR_GPIOAEN; }
+		if(m_port == GPIOB) { RCC->AHBENR &= ~RCC_AHBENR_GPIOBEN; }
+		if(m_port == GPIOC) { RCC->AHBENR &= ~RCC_AHBENR_GPIOCEN; }
+		if(m_port == GPIOD) { RCC->AHBENR &= ~RCC_AHBENR_GPIODEN; }
+		if(m_port == GPIOE) { RCC->AHBENR &= ~RCC_AHBENR_GPIOEEN; }
+		if(m_port == GPIOF) { RCC->AHBENR &= ~RCC_AHBENR_GPIOFEN; }
 	}
 
 	void GPIO::GPIO_v_ModerConfig()
@@ -150,11 +150,11 @@ namespace Driver
 
 	void GPIO::GPIO_v_EnableClock()
 	{
-		if(this->m_port == GPIOA) { (RCC->AHBENR |= (1u << 17u)); }
-		if(this->m_port == GPIOB) { (RCC->AHBENR |= (1u << 18u)); }
-		if(this->m_port == GPIOC) { (RCC->AHBENR |= (1u << 19u)); }
-		if(this->m_port == GPIOD) { (RCC->AHBENR |= (1u << 20u)); }
-		if(this->m_port == GPIOE) { (RCC->AHBENR |= (1u << 21u)); }
-		if(this->m_port == GPIOF) { (RCC->AHBENR |= (1u << 22u)); }
+		if(m_port == GPIOA) { RCC->AHBENR |= RCC_AHBENR_GPIOAEN; }
+		if(m_port == GPIOB) { RCC->AHBENR |= RCC_AHBENR_GPIOBEN; }
+		if(m_port == GPIOC) { RCC->AHBENR |= RCC_AHBENR_GPIOCEN; }
+		if(m_port == GPIOD) { RCC->AHBENR |= RCC_AHBENR_GPIODEN; }
+		if(m_port == GPIOE) { RCC->AHBENR |= RCC_AHBENR_GPIOEEN; }
+		if(m_port == GPIOF) { RCC->AHBENR |= RCC_AHBENR_GPIOFEN; }
 	};
 }
