@@ -28,8 +28,8 @@ namespace Driver
 
 	uint8 USART::UART_ReadByte(void)
 	{
-		while (!(USART2->ISR & USART_ISR_RXNE));
-		return (uint8)USART2->RDR;
+		while (!(m_USARTx->ISR & USART_ISR_RXNE));
+		return (uint8)m_USARTx->RDR;
 	}
 
 	void USART::USART_v_ReadMessage(uint8* data, uint8 size)
@@ -38,15 +38,15 @@ namespace Driver
 
 	    for (i = 0; i < size; i++)
 	    {
-	        while (!(USART2->ISR & USART_ISR_RXNE));
-	        data[i] = (uint8)USART2->RDR;
+	        while (!(m_USARTx->ISR & USART_ISR_RXNE));
+	        data[i] = (uint8)m_USARTx->RDR;
 	    }
 	}
 
 	void USART::USART_v_WriteByte(uint8 data)
 	{
-	    while (!(USART2->ISR & USART_ISR_TXE));
-	    USART2->TDR = data;
+	    while (!(m_USARTx->ISR & USART_ISR_TXE));
+	    m_USARTx->TDR = data;
 	}
 
 	void USART::USART_v_WriteMessage(uint8* data, uint8 size)
@@ -55,8 +55,8 @@ namespace Driver
 
 	    for (i = 0; i < size; i++)
 	    {
-	        while (!(USART2->ISR & USART_ISR_TXE));
-	        USART2->TDR = data[i];
+	        while (!(m_USARTx->ISR & USART_ISR_TXE));
+	        m_USARTx->TDR = data[i];
 	    }
 	}
 
