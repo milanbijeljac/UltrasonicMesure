@@ -5,6 +5,7 @@
 
 namespace Driver
 {
+	/** Base timer class */
 	class TIM {
 	public:
 		TIM(TIM_TypeDef* TIMx,
@@ -21,9 +22,17 @@ namespace Driver
 
 	private:
 		void TIM_v_Init();
+		void TIM_v_EnableClock();
 
 	private:
 		TIM_TypeDef* m_TIMx;
-		uint8 m_frequency;
+		uint8 m_frequency;   /** Frequency in MHz */
+	};
+
+	/** General purpose timers */
+	class GP_TIM : public TIM  {
+
+
 	};
 }
+
