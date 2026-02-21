@@ -22,12 +22,22 @@
 #include "usart_driver.h"
 #include "tim_driver.h"
 
+extern "C" void initialise_monitor_handles(void);
+
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
-//extern void initialise_monitor_handles(void);
 
+uint8_t txData = 1;
+uint8_t startOfData = 0xDE;
+uint8_t endOfData = 0xAD;
+Driver::GP_TIM timer2(TIM2, 16, 0xFFFFFFu);
+
+extern "C" void TIM2_IRQHandler(void)
+{
+	timer2.GP_TIM_v_InputCaptureModeIRQHandling();
+}
 
 static void PLL_Enable(uint32 pllInputMultyply)
 {
@@ -55,40 +65,59 @@ static void PLL_Enable(uint32 pllInputMultyply)
 	while((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL);
 }
 
-uint8_t txData = 1;
-uint8_t startOfData = 0xDE;
-uint8_t endOfData = 0xAD;
+
 
 int main()
 {
-	//initialise_monitor_handles();
+	initialise_monitor_handles();
 
 	PLL_Enable(RCC_CFGR_PLLMUL4);
 
-	Driver::TIM timer(TIM3, 16);
+	Driver::TIM timer6(TIM6, 16);
+	timer6.TIM_v_Init();
 
+	/* USART2_TX */
 	Driver::GPIO gpioa2(GPIOA, Driver::GPIO::GpioPin::P2, Driver::GPIO::Mode::AlternateFunctionMode,
 			Driver::GPIO::Speed::HighSpeed, Driver::GPIO::PullUpDown::NoPull, Driver::GPIO::OutputType::PushPull
 			, Driver::GPIO::AlternateFunctionality::AF1);
-
+	/* USART2_RX */
 	Driver::GPIO gpioa3(GPIOA, Driver::GPIO::GpioPin::P3, Driver::GPIO::Mode::AlternateFunctionMode,
 				Driver::GPIO::Speed::HighSpeed, Driver::GPIO::PullUpDown::NoPull, Driver::GPIO::OutputType::PushPull
 				, Driver::GPIO::AlternateFunctionality::AF1);
 
-	Driver::USART usart(USART2, 16000000, 115200);
+	/* TIM2_CH1_ETR */
+	Driver::GPIO gpioa0(GPIOA, Driver::GPIO::GpioPin::P0, Driver::GPIO::Mode::AlternateFunctionMode,
+				Driver::GPIO::Speed::HighSpeed, Driver::GPIO::PullUpDown::NoPull, Driver::GPIO::OutputType::PushPull
+				, Driver::GPIO::AlternateFunctionality::AF2);
+
+	/* Sensor Trigger */
+	Driver::GPIO gpioc8(GPIOC, Driver::GPIO::GpioPin::P8, Driver::GPIO::Mode::OutputMode,
+				Driver::GPIO::Speed::MediumSpeed, Driver::GPIO::PullUpDown::PullDown, Driver::GPIO::OutputType::PushPull);
+
+	Driver::USART usart2(USART2, 16000000, 115200);
+
+	timer2.GP_TIM_v_Init();
+	timer2.GP_TIM_v_InputCaptureModeConfig();
 
     /* Loop forever */
-    int i;
+	Driver::GpioHelper::GPIO_v_BitSetResetConfig(GPIOC, Driver::GPIO::GpioPin::P8, SET);
 	while(1)
 	{
-
-		usart.USART_v_WriteByte(startOfData);
+#if(0)
+		int i;
+		usart2.USART_v_WriteByte(startOfData);
 	    for(i = 0; i < 13; i++)
 	    {
-	    	usart.USART_v_WriteByte(txData);
+	    	usart2.USART_v_WriteByte(txData);
 	    	txData++;
-	    	timer.Delay_v_ms(20);
+	    	timer6.Delay_v_ms(100);
 	    }
-	    usart.USART_v_WriteByte(endOfData);
+	    usart2.USART_v_WriteByte(endOfData);
+#endif
+		/* Testing input capture mode for TIM2 where GPIOC PIN 8 is connected to GPIOA PIN 0 (timer 2 input capture AF set) */
+	    Driver::GpioHelper::GPIO_v_TogglePin(GPIOC, Driver::GPIO::GpioPin::P8);
+	    timer6.Delay_v_us(40);
+	    Driver::GpioHelper::GPIO_v_TogglePin(GPIOC, Driver::GPIO::GpioPin::P8);
+	    timer6.Delay_v_ms(200);
 	}
 }
