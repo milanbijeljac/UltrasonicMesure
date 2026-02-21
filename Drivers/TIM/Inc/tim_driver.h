@@ -6,33 +6,56 @@
 namespace Driver
 {
 	/** Base timer class */
-	class TIM {
+	class TIM
+	{
 	public:
-		TIM(TIM_TypeDef* TIMx,
-			uint8 frequency )
-		: m_TIMx(TIMx),
-		  m_frequency(frequency)
+		explicit TIM(TIM_TypeDef* TIMx, uint8 frequency ) : m_TIMx(TIMx), m_frequency(frequency)
 		{
-			TIM_v_Init();
+
 		}
 
 	public:
+		void TIM_v_Init();
 		void Delay_v_us (uint16 us);
 		void Delay_v_ms (uint16 ms);
 
 	private:
-		void TIM_v_Init();
 		void TIM_v_EnableClock();
 
-	private:
+	protected:
 		TIM_TypeDef* m_TIMx;
+
+	private:
 		uint8 m_frequency;   /** Frequency in MHz */
+
+
 	};
 
 	/** General purpose timers */
-	class GP_TIM : public TIM  {
+	class GP_TIM : public TIM
+	{
+	public:
+		GP_TIM(TIM_TypeDef* TIMx, uint8 frequency ) : TIM(TIMx, frequency)
+		{
 
+		}
 
+		GP_TIM(TIM_TypeDef* TIMx, uint8 frequency, uint32 autoReloadValue ) : TIM(TIMx, frequency), m_autoReloadValue(autoReloadValue)
+		{
+
+		}
+
+		void GP_TIM_v_Init();
+		void GP_TIM_v_InputCaptureModeConfig();
+		void GP_TIM_v_InputCaptureModeIRQHandling();
+
+		uint32 GP_TIM_u_GetCaptureValue () const { return m_captureDifference; };
+
+	private:
+		uint32 m_autoReloadValue = 0;
+		uint32 m_captureDifference;
+		uint32 m_inputCapture1;
+		uint32 m_inputCapture2;
 	};
 }
 
