@@ -89,6 +89,22 @@ namespace Driver
 			GPIO_v_Init();
 		}
 
+		GPIO(GPIO_TypeDef* port,
+					 GpioPin GpioPin,
+				     Mode Mode,
+					 Speed Speed,
+					 PullUpDown PullUpDown,
+					 OutputType OutputType )
+				: m_port(port),
+				  m_GpioPin(GpioPin),
+				  m_Moder(Mode),
+				  m_Speed(Speed),
+				  m_PullUpDown(PullUpDown),
+				  m_OutputType(OutputType)
+				{
+					GPIO_v_Init();
+				}
+
 		/** Method used to deinitialize port */
 		void GPIO_v_DeInit();
 		/** Method used to disable RCC for GPIOx */
