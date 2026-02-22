@@ -18,6 +18,7 @@ namespace Driver
 		void TIM_v_Init();
 		void Delay_v_us (uint16 us);
 		void Delay_v_ms (uint16 ms);
+		~TIM() = default;
 
 	private:
 		void TIM_v_EnableClock();
@@ -48,8 +49,8 @@ namespace Driver
 		void GP_TIM_v_Init();
 		void GP_TIM_v_InputCaptureModeConfig();
 		void GP_TIM_v_InputCaptureModeIRQHandling();
-
 		uint32 GP_TIM_u_GetCaptureValue () const { return m_captureDifference; };
+		~GP_TIM() = default;
 
 	private:
 		uint32 m_autoReloadValue = 0;
