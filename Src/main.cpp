@@ -21,6 +21,7 @@
 #include "gpio_driver.h"
 #include "usart_driver.h"
 #include "tim_driver.h"
+#include "../Sensor/HC-SR04/Inc/HCSR04.h"
 
 extern "C" void initialise_monitor_handles(void);
 
@@ -32,7 +33,8 @@ extern "C" void initialise_monitor_handles(void);
 uint8_t txData = 1;
 uint8_t startOfData = 0xDE;
 uint8_t endOfData = 0xAD;
-Driver::GP_TIM timer2(TIM2, 16, 0xFFFFFFu);
+float distance;
+Driver::GP_TIM timer2(TIM2, 16, 0xFFFFFFFFu);
 
 extern "C" void TIM2_IRQHandler(void)
 {
@@ -64,7 +66,6 @@ static void PLL_Enable(uint32 pllInputMultyply)
 	/* Wait for system clock switch */
 	while((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL);
 }
-
 
 
 int main()
@@ -101,6 +102,7 @@ int main()
 
     /* Loop forever */
 	Driver::GpioHelper::GPIO_v_BitSetResetConfig(GPIOC, Driver::GPIO::GpioPin::P8, SET);
+	Sensor::HCSR04 hcsr04("HCSR04");
 	while(1)
 	{
 #if(0)
@@ -119,5 +121,7 @@ int main()
 	    timer6.Delay_v_us(40);
 	    Driver::GpioHelper::GPIO_v_TogglePin(GPIOC, Driver::GPIO::GpioPin::P8);
 	    timer6.Delay_v_ms(200);
+	    distance = hcsr04.HCSR04_f_CalculateDistance(timer2.GP_TIM_u_GetCaptureValue(), Sensor::HCSR04::Unit::centimeters);
+
 	}
 }
