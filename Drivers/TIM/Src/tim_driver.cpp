@@ -101,12 +101,10 @@ namespace Driver
 	    		/* In case of overflow calculate what value that overflowed (capture1) and add
 	    		 * current setting of ARR minus what was left from capture2) */
 	    		m_captureDifference = m_inputCapture2 + (m_TIMx->ARR - m_inputCapture1);
-	    		m_captureDifference /= 58;
 	    	}
 	    	else
 			{
 	    		m_captureDifference = m_inputCapture2 - m_inputCapture1;
-	    		m_captureDifference /= 58;
 			}
 	    }
 	}
