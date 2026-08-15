@@ -1,10 +1,7 @@
 #pragma once
 
-#include <stdint.h>
 #include <memory>
-
-typedef uint8_t uint8;
-typedef uint16_t uint16;
+#include "types.h"
 
 namespace DataStructure
 {
@@ -13,7 +10,7 @@ namespace DataStructure
 	class RingBuffer
 	{
 	public:
-		static bool createObj(uint8 size, T* elementStorage, void* objectStorage, RingBuffer*& out)
+		[[nodiscard]] static bool createObj(uint8 size, T* elementStorage, void* objectStorage, RingBuffer*& out)
 		{
 			/* Check if size exceeds uint8 and if memory location is nullptr */
 			if (size == 0 || size > 255 || elementStorage == nullptr)
@@ -32,13 +29,13 @@ namespace DataStructure
 			this->~RingBuffer();
 		}
 		/** Getter for available bytes to read */
-		uint8 RingBuffer_u_GetMaxReadSize() const { return m_size - m_MaxBytesToWrite; }
+		[[nodiscard]] uint8 RingBuffer_u_GetMaxReadSize() const noexcept { return m_size - m_MaxBytesToWrite; }
 
 		/** Getter for read index */
-		uint8 RingBuffer_u_GetReadIndex() const { return m_readIndex; }
+		[[nodiscard]] uint8 RingBuffer_u_GetReadIndex() const noexcept { return m_readIndex; }
 
 		/** Getter for write index */
-		uint8 RingBuffer_u_GetWriteIndex() const { return m_writeIndex; }
+		[[nodiscard]] uint8 RingBuffer_u_GetWriteIndex() const noexcept { return m_writeIndex; }
 
 		/**
 		 *
