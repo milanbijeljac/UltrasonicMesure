@@ -10,6 +10,16 @@ namespace DataStructure
 	class RingBuffer
 	{
 	public:
+		/** Result of a write/read operation */
+		enum class Status : uint8
+		{
+			Ok = 0,
+			Overwrite,           /* write would clobber not-yet-read data */
+			WriteLimitExceeded,  /* requested write larger than free space  */
+			ReadSizeExceeded,    /* requested read larger than available    */
+			Empty                /* nothing to read                         */
+		};
+
 		[[nodiscard]] static bool createObj(uint8 size, T* elementStorage, void* objectStorage, RingBuffer*& out)
 		{
 			/* Check if size exceeds uint8 and if memory location is nullptr */
@@ -45,35 +55,34 @@ namespace DataStructure
 		 * \return     - NONE
 		 *
 		 */
-		void RingBuffer_v_WriteElement(const T* data, uint8 size)
+		[[nodiscard]] Status RingBuffer_v_WriteElement(const T* data, uint8 size)
 		{
 			uint8 i;
 
 			if ((RingBuffer::m_fullCircle == 1u) && (RingBuffer::m_writeIndex == RingBuffer::m_readIndex))
 			{
-				/* ERROR - Overwrite attempt error */
-
+				return Status::Overwrite;
 			}
 			else if ((size > RingBuffer::m_MaxBytesToWrite) || (size > RingBuffer::m_size))
 			{
-				/* ERROR - Write limit exceeded */
+				return Status::WriteLimitExceeded;
 			}
-			else
-			{
-				for (i = 0; i < size; i++)
-				{
-					if (RingBuffer::m_writeIndex == RingBuffer::m_size)
-					{
-						RingBuffer::m_writeIndex = 0u;
-						RingBuffer::m_fullCircle = 1u;
-					}
 
-					RingBuffer::buffer[RingBuffer::m_writeIndex] = *data;
-					data++;
-					RingBuffer::m_writeIndex++;
-					RingBuffer::m_MaxBytesToWrite--;
+			for (i = 0; i < size; i++)
+			{
+				if (RingBuffer::m_writeIndex == RingBuffer::m_size)
+				{
+					RingBuffer::m_writeIndex = 0u;
+					RingBuffer::m_fullCircle = 1u;
 				}
+
+				RingBuffer::buffer[RingBuffer::m_writeIndex] = *data;
+				data++;
+				RingBuffer::m_writeIndex++;
+				RingBuffer::m_MaxBytesToWrite--;
 			}
+
+			return Status::Ok;
 		}
 
 		/**
@@ -84,7 +93,7 @@ namespace DataStructure
 		 * \return     - NONE
 		 *
 		 */
-		void RingBuffer_v_ReadElement(T* data, uint8 size)
+		[[nodiscard]] Status RingBuffer_v_ReadElement(T* data, uint8 size)
 		{
 			uint8 i;
 			uint8 u_readLength = 0u;
@@ -95,31 +104,26 @@ namespace DataStructure
 			{
 				if ((m_writeIndex == m_readIndex) && m_fullCircle != 1)
 				{
-
+					return Status::Empty;
 				}
-				else
-				{
-					/* ERROR - read size exceeded */
-				}
-
+				return Status::ReadSizeExceeded;
 			}
-			else
+
+			for (i = 0; i < size; i++)
 			{
-				for (i = 0; i < size; i++)
+				if (RingBuffer::m_readIndex == RingBuffer::m_size)
 				{
-					if (RingBuffer::m_readIndex == RingBuffer::m_size)
-					{
-						RingBuffer::m_readIndex = 0u;
-						RingBuffer::m_fullCircle = 0u;
-					}
-
-					*data = RingBuffer::buffer[RingBuffer::m_readIndex];
-					data++;
-					RingBuffer::m_readIndex++;
-					RingBuffer::m_MaxBytesToWrite++;
+					RingBuffer::m_readIndex = 0u;
+					RingBuffer::m_fullCircle = 0u;
 				}
 
+				*data = RingBuffer::buffer[RingBuffer::m_readIndex];
+				data++;
+				RingBuffer::m_readIndex++;
+				RingBuffer::m_MaxBytesToWrite++;
 			}
+
+			return Status::Ok;
 		}
 
 	private:

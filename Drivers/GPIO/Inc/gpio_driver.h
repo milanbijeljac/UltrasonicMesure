@@ -109,8 +109,6 @@ namespace Driver
 		void GPIO_v_DeInit();
 		/** Method used to disable RCC for GPIOx */
 		void GPIO_v_DisableClock();
-		/** Method used to toggle pin */
-		void GPIO_v_TogglePin(GPIO_TypeDef *port, GpioPin m_GpioPin);
 
 		/* Construct-once, live-forever peripheral object: trivial destructor
 		 * (no static-destructor/atexit overhead). Non-copyable/non-movable so
