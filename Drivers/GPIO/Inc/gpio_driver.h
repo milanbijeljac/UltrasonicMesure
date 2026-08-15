@@ -135,13 +135,13 @@ namespace Driver
 		void GPIO_v_AlternateFunctionConfig();
 		uint8 GPIO_u_PortCheck();
 	private:
-		GPIO_TypeDef* m_port;
-		GpioPin m_GpioPin;
-		Mode m_Moder;
-		Speed m_Speed;
-		PullUpDown m_PullUpDown;
-		OutputType m_OutputType;
-		AlternateFunctionality m_AlternateFunctionality;
+		GPIO_TypeDef* m_port {nullptr};
+		GpioPin m_GpioPin {0};
+		Mode m_Moder {0};
+		Speed m_Speed {0};
+		PullUpDown m_PullUpDown {0};
+		OutputType m_OutputType {0};
+		AlternateFunctionality m_AlternateFunctionality {0};
 	};
 
 }
