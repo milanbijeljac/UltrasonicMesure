@@ -21,7 +21,7 @@
 #include "gpio_driver.h"
 #include "usart_driver.h"
 #include "tim_driver.h"
-#include "../Sensor/HC-SR04/Inc/HCSR04.h"
+#include "HCSR04.h"
 
 extern "C" void initialise_monitor_handles(void);
 
