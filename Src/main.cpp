@@ -22,6 +22,9 @@
 #include "usart_driver.h"
 #include "tim_driver.h"
 #include "HCSR04.h"
+#include "stm32_gpio_output.h"
+#include "stm32_capture_timer.h"
+#include "stm32_delay.h"
 
 extern "C" void initialise_monitor_handles(void);
 
@@ -100,9 +103,15 @@ int main()
 	timer2.init();
 	timer2.input_capture_mode_config();
 
-    /* Loop forever */
-	Driver::GpioHelper::bit_set_reset_config(GPIOC, Driver::GPIO::GpioPin::P8, SET);
-	//Sensor::HCSR04 hcsr04("HCSR04");
+	/* HAL adapters wrapping the concrete STM32 drivers, injected into the sensor.
+	 * timer2 runs at 1 MHz (PSC=15 on a 16 MHz APB) => 1 tick = 1 us. */
+	platform::stm32::GpioOutput   trig_out(GPIOC, Driver::GPIO::GpioPin::P8);
+	platform::stm32::CaptureTimer  echo_timer(timer2, 1000000u);
+	platform::stm32::Delay         delay(timer6);
+
+	Sensor::HCSR04 hcsr04("HCSR04", trig_out, echo_timer, delay);
+
+	/* Loop forever */
 	while(1)
 	{
 #if(0)
@@ -116,12 +125,8 @@ int main()
 	    }
 	    usart2.write_byte(endOfData);
 #endif
-		/* Testing input capture mode for TIM2 where GPIOC PIN 8 is connected to GPIOA PIN 0 (timer 2 input capture AF set) */
-	    Driver::GpioHelper::toggle_pin(GPIOC, Driver::GPIO::GpioPin::P8);
-	    timer6.delay_us(40);
-	    Driver::GpioHelper::toggle_pin(GPIOC, Driver::GPIO::GpioPin::P8);
-	    timer6.delay_ms(200);
-	    //distance = hcsr04.to_distance(timer2.get_capture_value(), Sensor::HCSR04::Unit::centimeters);
+		distance = hcsr04.measure(Sensor::HCSR04::Unit::centimeters);
+		timer6.delay_ms(200);
 
 	}
 }
