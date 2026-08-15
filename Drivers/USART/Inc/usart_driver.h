@@ -46,8 +46,8 @@ namespace Driver
 		void USART_v_Init();
 		void USART_v_EnableClock();
 	private:
-		USART_TypeDef* m_USARTx;
-		uint32 m_clock;
-		uint32 m_baudRate;
+		USART_TypeDef* m_USARTx {nullptr};
+		uint32 m_clock {0};
+		uint32 m_baudRate {0};
 	};
 }
