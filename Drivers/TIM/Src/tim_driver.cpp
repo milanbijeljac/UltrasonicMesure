@@ -14,8 +14,9 @@ namespace Driver
 		 * frequency (-1 since PSC register is configured that way)             */
 		m_TIMx->PSC = TIM::m_frequency - 1u;
 		m_TIMx->ARR = 0xFFFFu;
-		m_TIMx->CR1 |= 1u << 0u;
-		while(!(m_TIMx->SR & (1u << 0u)));
+		m_TIMx->EGR  = TIM_EGR_UG;      /* Force update event to latch PSC/ARR immediately */
+		m_TIMx->SR  &= ~TIM_SR_UIF;     /* Clear the update flag raised by UG (no busy-wait) */
+		m_TIMx->CR1 |= TIM_CR1_CEN;     /* Start counter */
 	}
 
 	void TIM::TIM_v_EnableClock()
