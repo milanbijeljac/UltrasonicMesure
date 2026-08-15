@@ -1,8 +1,8 @@
 #include "tim_driver.h"
 #include <core_cm0.h>
 
-#define US_TO_MS 1000u
-#define MS_TO_S  1000u
+constexpr uint16 US_TO_MS = 1000u;
+constexpr uint16 MS_TO_S =  1000u;
 
 namespace Driver
 {
