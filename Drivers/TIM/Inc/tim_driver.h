@@ -74,9 +74,9 @@ namespace Driver
 
 	private:
 		uint32 m_autoReloadValue = 0;
-		uint32 m_captureDifference;
-		uint32 m_inputCapture1;
-		uint32 m_inputCapture2;
+		volatile uint32 m_captureDifference = {0};
+		uint32 m_inputCapture1 = {0};
+		uint32 m_inputCapture2 = {0};
 	};
 }
 
