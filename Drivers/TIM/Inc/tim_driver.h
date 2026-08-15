@@ -60,7 +60,7 @@ namespace Driver
 		void GP_TIM_v_Init();
 		void GP_TIM_v_InputCaptureModeConfig();
 		void GP_TIM_v_InputCaptureModeIRQHandling();
-		uint32 GP_TIM_u_GetCaptureValue () const { return m_captureDifference; };
+		[[nodiscard]] uint32 GP_TIM_u_GetCaptureValue () const noexcept { return m_captureDifference; };
 		~GP_TIM() = default;
 
 		/* Prevent accidental copies that would re-init same peripheral */
