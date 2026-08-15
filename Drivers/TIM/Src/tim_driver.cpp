@@ -6,9 +6,9 @@ constexpr uint16 MS_TO_S =  1000u;
 
 namespace Driver
 {
-	void TIM::TIM_v_Init()
+	void TIM::init()
 	{
-		TIM::TIM_v_EnableClock();
+		TIM::enable_clock();
 
 		/* APB bus clock speed is currently set at value provided as argument
 		 * frequency (-1 since PSC register is configured that way)             */
@@ -19,7 +19,7 @@ namespace Driver
 		m_TIMx->CR1 |= TIM_CR1_CEN;     /* Start counter */
 	}
 
-	void TIM::TIM_v_EnableClock()
+	void TIM::enable_clock()
 	{
 		if(m_TIMx == TIM1 ) { RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;  }
 		if(m_TIMx == TIM2 ) { RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;  }
@@ -34,23 +34,23 @@ namespace Driver
 
 	};
 
-	void TIM::Delay_v_us (uint16 us)
+	void TIM::delay_us (uint16 us)
 	{
 		m_TIMx->CNT = 0u;
 		while (m_TIMx->CNT < us);
 
 	}
-	void TIM::Delay_v_ms (uint16 ms)
+	void TIM::delay_ms (uint16 ms)
 	{
 		for (uint16 i = 0; i < ms; i++)
 		{
-			Delay_v_us(US_TO_MS);
+			delay_us(US_TO_MS);
 		}
 	}
 
-	void GP_TIM::GP_TIM_v_Init()
+	void GP_TIM::init()
 	{
-		TIM::TIM_v_Init();
+		TIM::init();
 		if(m_autoReloadValue != 0)
 		{
 			m_TIMx->CR1 &= ~TIM_CR1_CEN;         /* Disable timer */
@@ -59,7 +59,7 @@ namespace Driver
 		}
 	}
 
-	void GP_TIM::GP_TIM_v_InputCaptureModeConfig()
+	void GP_TIM::input_capture_mode_config()
 	{
 		/* For now capture/compare channels 1 and 2 are mapped to timer input 1, where rising edge was used for CC1 and falling for CC2 */
 		/* TODO: Expand driver to have multiple selection */
@@ -81,7 +81,7 @@ namespace Driver
 		m_TIMx->CR1 |= TIM_CR1_CEN;         /* Start timer */
 	}
 
-	void GP_TIM::GP_TIM_v_InputCaptureModeIRQHandling()
+	void GP_TIM::input_capture_mode_irq_handling()
 	{
 		uint8 step = 0;
 	    if (m_TIMx->SR & TIM_SR_CC1IF)

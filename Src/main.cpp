@@ -38,7 +38,7 @@ Driver::GP_TIM timer2(TIM2, 16, 0xFFFFFFFFu);
 
 extern "C" void TIM2_IRQHandler(void)
 {
-	timer2.GP_TIM_v_InputCaptureModeIRQHandling();
+	timer2.input_capture_mode_irq_handling();
 }
 
 static void PLL_Enable(uint32 pllInputMultyply)
@@ -75,7 +75,7 @@ int main()
 	PLL_Enable(RCC_CFGR_PLLMUL4);
 
 	Driver::TIM timer6(TIM6, 16);
-	timer6.TIM_v_Init();
+	timer6.init();
 
 	/* USART2_TX */
 	Driver::GPIO gpioa2(GPIOA, Driver::GPIO::GpioPin::P2, Driver::GPIO::Mode::AlternateFunctionMode,
@@ -97,31 +97,31 @@ int main()
 
 	Driver::USART usart2(USART2, 16000000, 115200);
 
-	timer2.GP_TIM_v_Init();
-	timer2.GP_TIM_v_InputCaptureModeConfig();
+	timer2.init();
+	timer2.input_capture_mode_config();
 
     /* Loop forever */
-	Driver::GpioHelper::GPIO_v_BitSetResetConfig(GPIOC, Driver::GPIO::GpioPin::P8, SET);
+	Driver::GpioHelper::bit_set_reset_config(GPIOC, Driver::GPIO::GpioPin::P8, SET);
 	Sensor::HCSR04 hcsr04("HCSR04");
 	while(1)
 	{
 #if(0)
 		int i;
-		usart2.USART_v_WriteByte(startOfData);
+		usart2.write_byte(startOfData);
 	    for(i = 0; i < 13; i++)
 	    {
-	    	usart2.USART_v_WriteByte(txData);
+	    	usart2.write_byte(txData);
 	    	txData++;
-	    	timer6.Delay_v_ms(100);
+	    	timer6.delay_ms(100);
 	    }
-	    usart2.USART_v_WriteByte(endOfData);
+	    usart2.write_byte(endOfData);
 #endif
 		/* Testing input capture mode for TIM2 where GPIOC PIN 8 is connected to GPIOA PIN 0 (timer 2 input capture AF set) */
-	    Driver::GpioHelper::GPIO_v_TogglePin(GPIOC, Driver::GPIO::GpioPin::P8);
-	    timer6.Delay_v_us(40);
-	    Driver::GpioHelper::GPIO_v_TogglePin(GPIOC, Driver::GPIO::GpioPin::P8);
-	    timer6.Delay_v_ms(200);
-	    distance = hcsr04.HCSR04_f_CalculateDistance(timer2.GP_TIM_u_GetCaptureValue(), Sensor::HCSR04::Unit::centimeters);
+	    Driver::GpioHelper::toggle_pin(GPIOC, Driver::GPIO::GpioPin::P8);
+	    timer6.delay_us(40);
+	    Driver::GpioHelper::toggle_pin(GPIOC, Driver::GPIO::GpioPin::P8);
+	    timer6.delay_ms(200);
+	    distance = hcsr04.calculate_distance(timer2.get_capture_value(), Sensor::HCSR04::Unit::centimeters);
 
 	}
 }

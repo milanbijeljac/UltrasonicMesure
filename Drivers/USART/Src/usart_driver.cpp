@@ -3,9 +3,9 @@
 
 namespace Driver
 {
-	void USART::USART_v_Init()
+	void USART::init()
 	{
-		USART::USART_v_EnableClock();
+		USART::enable_clock();
 
 	    /* Disable USART */
 		USART::m_USARTx->CR1 &= ~USART_CR1_UE;
@@ -26,13 +26,13 @@ namespace Driver
 		USART::m_USARTx->CR1 |= USART_CR1_UE;
 	}
 
-	uint8 USART::UART_ReadByte(void)
+	uint8 USART::read_byte(void)
 	{
 		while (!(m_USARTx->ISR & USART_ISR_RXNE));
 		return (uint8)m_USARTx->RDR;
 	}
 
-	void USART::USART_v_ReadMessage(uint8* data, uint8 size)
+	void USART::read_message(uint8* data, uint8 size)
 	{
 	    uint8 i;
 
@@ -43,13 +43,13 @@ namespace Driver
 	    }
 	}
 
-	void USART::USART_v_WriteByte(uint8 data)
+	void USART::write_byte(uint8 data)
 	{
 	    while (!(m_USARTx->ISR & USART_ISR_TXE));
 	    m_USARTx->TDR = data;
 	}
 
-	void USART::USART_v_WriteMessage(uint8* data, uint8 size)
+	void USART::write_message(uint8* data, uint8 size)
 	{
 	    uint8 i;
 
@@ -60,7 +60,7 @@ namespace Driver
 	    }
 	}
 
-	void USART::USART_v_EnableClock()
+	void USART::enable_clock()
 	{
 		if(USART::m_USARTx == USART1) { (RCC->APB2ENR |= (1u << 14u));  }
 		if(USART::m_USARTx == USART2) { (RCC->APB1ENR |= (1u << 17u));  }
@@ -68,7 +68,7 @@ namespace Driver
 		if(USART::m_USARTx == USART4) { (RCC->APB1ENR |= (1u << 19u));  }
 	}
 
-	void USART::USART_v_DisableClock()
+	void USART::disable_clock()
 	{
 		if(USART::m_USARTx == USART1) { (RCC->APB2ENR &= ~(1u << 14u));  }
 		if(USART::m_USARTx == USART2) { (RCC->APB1ENR &= ~(1u << 17u));  }

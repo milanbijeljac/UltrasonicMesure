@@ -20,7 +20,7 @@ namespace DataStructure
 			Empty                /* nothing to read                         */
 		};
 
-		[[nodiscard]] static bool createObj(uint8 size, T* elementStorage, void* objectStorage, RingBuffer*& out)
+		[[nodiscard]] static bool create_obj(uint8 size, T* elementStorage, void* objectStorage, RingBuffer*& out)
 		{
 			/* Check if size exceeds uint8 and if memory location is nullptr */
 			if (size == 0 || size > 255 || elementStorage == nullptr)
@@ -34,18 +34,18 @@ namespace DataStructure
 			return true;
 		}
 
-		void destroyObj()
+		void destroy_obj()
 		{
 			this->~RingBuffer();
 		}
 		/** Getter for available bytes to read */
-		[[nodiscard]] uint8 RingBuffer_u_GetMaxReadSize() const noexcept { return m_size - m_MaxBytesToWrite; }
+		[[nodiscard]] uint8 get_max_read_size() const noexcept { return m_size - m_MaxBytesToWrite; }
 
 		/** Getter for read index */
-		[[nodiscard]] uint8 RingBuffer_u_GetReadIndex() const noexcept { return m_readIndex; }
+		[[nodiscard]] uint8 get_read_index() const noexcept { return m_readIndex; }
 
 		/** Getter for write index */
-		[[nodiscard]] uint8 RingBuffer_u_GetWriteIndex() const noexcept { return m_writeIndex; }
+		[[nodiscard]] uint8 get_write_index() const noexcept { return m_writeIndex; }
 
 		/**
 		 *
@@ -55,7 +55,7 @@ namespace DataStructure
 		 * \return     - NONE
 		 *
 		 */
-		[[nodiscard]] Status RingBuffer_v_WriteElement(const T* data, uint8 size)
+		[[nodiscard]] Status write_element(const T* data, uint8 size)
 		{
 			uint8 i;
 
@@ -93,12 +93,12 @@ namespace DataStructure
 		 * \return     - NONE
 		 *
 		 */
-		[[nodiscard]] Status RingBuffer_v_ReadElement(T* data, uint8 size)
+		[[nodiscard]] Status read_element(T* data, uint8 size)
 		{
 			uint8 i;
 			uint8 u_readLength = 0u;
 
-			u_readLength = RingBuffer::RingBuffer_u_GetMaxReadSize();
+			u_readLength = RingBuffer::get_max_read_size();
 
 			if (size > u_readLength)
 			{

@@ -13,20 +13,20 @@
 namespace Driver
 {
 
-	void GPIO::GPIO_v_Init()
+	void GPIO::init()
 	{
-		GPIO::GPIO_v_EnableClock();
-		GPIO::GPIO_v_ModerConfig();
-		GPIO::GPIO_v_SpeedConfig();
-		GPIO::GPIO_v_PupdrConfig();
-		GPIO::GPIO_v_OutputConfig();
+		GPIO::enable_clock();
+		GPIO::moder_config();
+		GPIO::speed_config();
+		GPIO::pupdr_config();
+		GPIO::output_config();
 		if(m_Moder == GPIO::Mode::AlternateFunctionMode)
 		{
-			GPIO::GPIO_v_AlternateFunctionConfig();
+			GPIO::alternate_function_config();
 		}
 	}
 
-	void GPIO::GPIO_v_DeInit()
+	void GPIO::deinit()
 	{
 		if(m_port == GPIOA) { RCC->AHBENR &= ~RCC_AHBENR_GPIOAEN; }
 		if(m_port == GPIOB) { RCC->AHBENR &= ~RCC_AHBENR_GPIOBEN; }
@@ -36,7 +36,7 @@ namespace Driver
 		if(m_port == GPIOF) { RCC->AHBENR &= ~RCC_AHBENR_GPIOFEN; }
 	}
 
-	void GPIO::GPIO_v_ModerConfig()
+	void GPIO::moder_config()
 	{
 		uint8 u_port;
 		uint8 u_extiBitShift;
@@ -76,7 +76,7 @@ namespace Driver
 
 			/* Configure GPIO port selection in SYSCFG_EXTICR
 			 * For different ports, different values need to be stored in register*/
-			u_port = GPIO::GPIO_u_PortCheck();
+			u_port = GPIO::port_check();
 
 			/* Check in which of 4 EXTI registers PIN belong */
 			extiToPinMap = static_cast<uint8>(m_GpioPin) / 4u;
@@ -96,28 +96,28 @@ namespace Driver
 
 	}
 
-	void GPIO::GPIO_v_SpeedConfig()
+	void GPIO::speed_config()
 	{
 		/* Perform clear bit operation */
 		m_port->OSPEEDR &= ~(CLEAR_2_BITS << (static_cast<uint8>(m_GpioPin) * 2));
 		m_port->OSPEEDR |= static_cast<uint8>(m_Speed) << (static_cast<uint8>(m_GpioPin) * 2);
 	}
 
-	void GPIO::GPIO_v_PupdrConfig()
+	void GPIO::pupdr_config()
 	{
 		/* Perform clear bit operation */
 		m_port->PUPDR &= ~(CLEAR_2_BITS << (static_cast<uint8>(m_GpioPin)* 2));
 		m_port->PUPDR |= static_cast<uint8>(m_PullUpDown) << (static_cast<uint8>(m_GpioPin)* 2);
 	}
 
-	void GPIO::GPIO_v_OutputConfig()
+	void GPIO::output_config()
 	{
 		/* Perform clear bit operation */
 		m_port->OTYPER &= ~(CLEAR_1_BIT << (static_cast<uint8>(m_GpioPin) * 2));
 		m_port->OTYPER |= static_cast<uint8>(m_OutputType) << static_cast<uint8>(m_GpioPin);
 	}
 
-	void GPIO::GPIO_v_AlternateFunctionConfig()
+	void GPIO::alternate_function_config()
 	{
 		if(static_cast<uint8>(m_GpioPin) <= PIN_SEPARATION)
 		{
@@ -134,7 +134,7 @@ namespace Driver
 		}
 	}
 
-	uint8 GPIO::GPIO_u_PortCheck()
+	uint8 GPIO::port_check()
 	{
 		uint8 u_retVal = 0u;
 
@@ -148,7 +148,7 @@ namespace Driver
 		return u_retVal;
 	}
 
-	void GPIO::GPIO_v_EnableClock()
+	void GPIO::enable_clock()
 	{
 		if(m_port == GPIOA) { RCC->AHBENR |= RCC_AHBENR_GPIOAEN; }
 		if(m_port == GPIOB) { RCC->AHBENR |= RCC_AHBENR_GPIOBEN; }

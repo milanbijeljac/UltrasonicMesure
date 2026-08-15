@@ -2,7 +2,7 @@
 
 namespace Sensor
 {
-	float HCSR04::HCSR04_f_CalculateDistance(uint32 capture, HCSR04::Unit unit)
+	float HCSR04::calculate_distance(uint32 capture, HCSR04::Unit unit)
 	{
 		if(unit == HCSR04::Unit::centimeters)
 		{

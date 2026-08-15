@@ -20,7 +20,7 @@ namespace Sensor
 
 		}
 
-		float HCSR04_f_CalculateDistance(uint32 capture, HCSR04::Unit unit);
+		float calculate_distance(uint32 capture, HCSR04::Unit unit);
 		~HCSR04() = default;
 
 	private:

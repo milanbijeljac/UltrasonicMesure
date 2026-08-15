@@ -86,7 +86,7 @@ namespace Driver
 		  m_OutputType(OutputType),
 		  m_AlternateFunctionality(AlternateFunctionality)
 		{
-			GPIO_v_Init();
+			init();
 		}
 
 		GPIO(GPIO_TypeDef* port,
@@ -102,13 +102,13 @@ namespace Driver
 				  m_PullUpDown(PullUpDown),
 				  m_OutputType(OutputType)
 				{
-					GPIO_v_Init();
+					init();
 				}
 
 		/** Method used to deinitialize port */
-		void GPIO_v_DeInit();
+		void deinit();
 		/** Method used to disable RCC for GPIOx */
-		void GPIO_v_DisableClock();
+		void disable_clock();
 
 		/* Construct-once, live-forever peripheral object: trivial destructor
 		 * (no static-destructor/atexit overhead). Non-copyable/non-movable so
@@ -124,14 +124,14 @@ namespace Driver
 		GPIO& operator=(GPIO&&)      = delete;
 
 	private:
-		void GPIO_v_Init();
-		void GPIO_v_EnableClock();
-		void GPIO_v_ModerConfig();
-		void GPIO_v_SpeedConfig();
-		void GPIO_v_PupdrConfig();
-		void GPIO_v_OutputConfig();
-		void GPIO_v_AlternateFunctionConfig();
-		uint8 GPIO_u_PortCheck();
+		void init();
+		void enable_clock();
+		void moder_config();
+		void speed_config();
+		void pupdr_config();
+		void output_config();
+		void alternate_function_config();
+		uint8 port_check();
 	private:
 		GPIO_TypeDef* m_port {nullptr};
 		GpioPin m_GpioPin {0};
@@ -147,7 +147,7 @@ namespace Driver
 namespace Driver::GpioHelper
 {
 	/** Function used to read from pin of selected port */
-	inline uint8 GPIO_u_ReadFromInputPin(GPIO_TypeDef* port, GPIO::GpioPin pin)
+	inline uint8 read_from_input_pin(GPIO_TypeDef* port, GPIO::GpioPin pin)
 	{
 		uint8 u_retVal = 0u;
 		u_retVal = (uint8)((port->IDR >> static_cast<uint8>(pin)) & 0x00000001);
@@ -155,7 +155,7 @@ namespace Driver::GpioHelper
 	}
 
 	/** Function used to read whole selected port */
-	inline uint32 GPIO_u_ReadFromInput_port(GPIO_TypeDef *port)
+	inline uint32 read_from_input_port(GPIO_TypeDef *port)
 	{
 		uint32 u_retVal = 0u;
 		u_retVal = (uint32) port->IDR;
@@ -163,7 +163,7 @@ namespace Driver::GpioHelper
 	}
 
 	/** Function used to write to pin of selected port */
-	inline void GPIO_v_WriteToOutputPin(GPIO_TypeDef *port, GPIO::GpioPin pin, FlagStatus status)
+	inline void write_to_output_pin(GPIO_TypeDef *port, GPIO::GpioPin pin, FlagStatus status)
 	{
 		if(status == SET)
 		{
@@ -177,19 +177,19 @@ namespace Driver::GpioHelper
 	}
 
 	/** Function used to write whole selected port */
-	inline void GPIO_v_WriteToOutput_port(GPIO_TypeDef *port, uint32 u_value)
+	inline void write_to_output_port(GPIO_TypeDef *port, uint32 u_value)
 	{
 		port->ODR = u_value;
 	}
 
 	/* Function used to toggle pin with ODR register */
-	inline void GPIO_v_TogglePin(GPIO_TypeDef *port, GPIO::GpioPin pin)
+	inline void toggle_pin(GPIO_TypeDef *port, GPIO::GpioPin pin)
 	{
 		port->ODR ^= (1 << static_cast<uint8>(pin));
 	}
 
 	/* Function used to set/reset bit with BSRR register */
-	inline void GPIO_v_BitSetResetConfig(GPIO_TypeDef *port, GPIO::GpioPin pin, FlagStatus status)
+	inline void bit_set_reset_config(GPIO_TypeDef *port, GPIO::GpioPin pin, FlagStatus status)
 	{
 		if(status == SET)
 		{

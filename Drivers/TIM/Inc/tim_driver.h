@@ -15,9 +15,9 @@ namespace Driver
 		}
 
 	public:
-		void TIM_v_Init();
-		void Delay_v_us (uint16 us);
-		void Delay_v_ms (uint16 ms);
+		void init();
+		void delay_us (uint16 us);
+		void delay_ms (uint16 ms);
 		/* Construct-once, live-forever peripheral object: trivial destructor
 		 * (no static-destructor/atexit overhead). Non-copyable/non-movable so
 		 * two objects can never alias or re-init the same peripheral. */
@@ -32,7 +32,7 @@ namespace Driver
 		TIM& operator=(TIM&&)      = delete;
 
 	private:
-		void TIM_v_EnableClock();
+		void enable_clock();
 
 	protected:
 		TIM_TypeDef* m_TIMx;
@@ -57,10 +57,10 @@ namespace Driver
 
 		}
 
-		void GP_TIM_v_Init();
-		void GP_TIM_v_InputCaptureModeConfig();
-		void GP_TIM_v_InputCaptureModeIRQHandling();
-		[[nodiscard]] uint32 GP_TIM_u_GetCaptureValue () const noexcept { return m_captureDifference; };
+		void init();
+		void input_capture_mode_config();
+		void input_capture_mode_irq_handling();
+		[[nodiscard]] uint32 get_capture_value () const noexcept { return m_captureDifference; };
 		~GP_TIM() = default;
 
 		/* Prevent accidental copies that would re-init same peripheral */
