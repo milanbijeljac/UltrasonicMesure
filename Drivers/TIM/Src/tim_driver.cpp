@@ -83,7 +83,7 @@ namespace Driver
 
 	void GP_TIM::GP_TIM_v_InputCaptureModeIRQHandling()
 	{
-		uint8 step;
+		uint8 step = 0;
 	    if (m_TIMx->SR & TIM_SR_CC1IF)
 	    {
 	    	m_inputCapture1 = m_TIMx->CCR1; /* TIM_SR_CC1IF flag cleared when by reading TIMx_CCR1 register */
@@ -101,7 +101,7 @@ namespace Driver
 	    	{
 	    		/* In case of overflow calculate what value that overflowed (capture1) and add
 	    		 * current setting of ARR minus what was left from capture2) */
-	    		m_captureDifference = m_inputCapture2 + (m_TIMx->ARR - m_inputCapture1);
+	    		m_captureDifference = m_inputCapture2 + (m_TIMx->ARR - m_inputCapture1) + 1;
 	    	}
 	    	else
 			{
