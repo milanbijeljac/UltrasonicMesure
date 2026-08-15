@@ -8,7 +8,7 @@ namespace Sensor
 	{
 	public:
 
-		SensorBase(std::string_view name) : m_name(name)
+		SensorBase(const std::string_view& name) : m_name(name)
 		{
 
 		}
