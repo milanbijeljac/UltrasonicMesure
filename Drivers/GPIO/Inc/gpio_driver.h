@@ -195,24 +195,11 @@ namespace Driver::GpioHelper
 	{
 		if(status == SET)
 		{
-			port->BSRR |= 1u << static_cast<uint8>(pin);
+			port->BSRR = 1u << static_cast<uint8>(pin);
 		}
 		else
 		{
-			port->BSRR &= ~(1u << (static_cast<uint8>(pin) + 16u));
-		}
-	}
-
-	/** Function used to toggle bit with BSRR register */
-	inline void GPIO_v_BitToggleBsrr(GPIO_TypeDef *port, GPIO::GpioPin pin, FlagStatus status)
-	{
-		if(status == SET)
-		{
-			port->BSRR ^= 1u << static_cast<uint8>(pin);
-		}
-		else
-		{
-			port->BSRR ^= 1u << (static_cast<uint8>(pin) + 16u);
+			port->BSRR = 1u << (static_cast<uint8>(pin) + 16u);
 		}
 	}
 }
