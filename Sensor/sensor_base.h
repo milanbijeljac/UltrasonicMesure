@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <string_view>
 
 namespace Sensor
 {
@@ -8,12 +8,12 @@ namespace Sensor
 	{
 	public:
 
-		SensorBase(const std::string_view& name) : m_name(name)
+		SensorBase(std::string_view name) : m_name(name)
 		{
 
 		}
 
-		std::string_view getName() const noexcept { return m_name; };
+		[[nodiscard]] std::string_view getName() const noexcept { return m_name; };
 
 	protected:
 		/* Protected + non-virtual: derived classes can destroy the base
