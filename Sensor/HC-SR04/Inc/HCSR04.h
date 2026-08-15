@@ -2,6 +2,9 @@
 
 #include "sensor_base.h"
 #include "types.h"
+#include "i_capture_timer.h"
+#include "i_delay.h"
+#include "i_digital_output.h"
 
 namespace Sensor
 {
@@ -15,15 +18,23 @@ namespace Sensor
 			inches
 		};
 
-		HCSR04(const std::string_view& name) : SensorBase(name)
+		HCSR04(const std::string_view& name,
+			   hal::IDigitalOutput& trig,
+			   hal::ICaptureTimer& echo,
+			   hal::IDelay& delay) : SensorBase(name), m_trig(trig), m_echo(echo), m_delay(delay)
 		{
 
 		}
 
-		float calculate_distance(uint32 capture, HCSR04::Unit unit);
+		[[nodiscard]] float measure(Unit unit);
+
 		~HCSR04() = default;
 
-	private:
+		[[nodiscard]] static float to_distance(uint32 us, Unit unit);
 
+	private:
+        hal::IDigitalOutput& m_trig;
+        hal::ICaptureTimer&  m_echo;
+        hal::IDelay&         m_delay;
 	};
 }

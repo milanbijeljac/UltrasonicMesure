@@ -102,7 +102,7 @@ int main()
 
     /* Loop forever */
 	Driver::GpioHelper::bit_set_reset_config(GPIOC, Driver::GPIO::GpioPin::P8, SET);
-	Sensor::HCSR04 hcsr04("HCSR04");
+	//Sensor::HCSR04 hcsr04("HCSR04");
 	while(1)
 	{
 #if(0)
@@ -121,7 +121,7 @@ int main()
 	    timer6.delay_us(40);
 	    Driver::GpioHelper::toggle_pin(GPIOC, Driver::GPIO::GpioPin::P8);
 	    timer6.delay_ms(200);
-	    distance = hcsr04.calculate_distance(timer2.get_capture_value(), Sensor::HCSR04::Unit::centimeters);
+	    //distance = hcsr04.to_distance(timer2.get_capture_value(), Sensor::HCSR04::Unit::centimeters);
 
 	}
 }
