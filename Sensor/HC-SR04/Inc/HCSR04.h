@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../sensor_base.h"
+#include "sensor_base.h"
 #include "types.h"
 
 namespace Sensor
