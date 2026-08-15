@@ -112,7 +112,9 @@ namespace Driver
 		/** Method used to toggle pin */
 		void GPIO_v_TogglePin(GPIO_TypeDef *port, GpioPin m_GpioPin);
 
-		/* Prevent accidental copies that would re-init same peripheral */
+		/* Construct-once, live-forever peripheral object: trivial destructor
+		 * (no static-destructor/atexit overhead). Non-copyable/non-movable so
+		 * two objects can never alias or re-init the same peripheral. */
 		~GPIO() = default;
 
 		GPIO(const GPIO&)            = delete;

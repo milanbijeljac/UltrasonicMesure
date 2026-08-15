@@ -29,9 +29,11 @@ namespace Driver
 		void  USART_v_WriteByte(uint8 data);
 		void  USART_v_WriteMessage(uint8* data, uint8 size);
 
+		/* Construct-once, live-forever peripheral object: trivial destructor
+		 * (no static-destructor/atexit overhead). Non-copyable/non-movable so
+		 * two objects can never alias or re-init the same peripheral. */
 		~USART() = default;
 
-		/* Prevent accidental copies that would re-init same peripheral */
 		USART(const USART&)            = delete;
 
 		USART& operator=(const USART&) = delete;

@@ -18,9 +18,11 @@ namespace Driver
 		void TIM_v_Init();
 		void Delay_v_us (uint16 us);
 		void Delay_v_ms (uint16 ms);
+		/* Construct-once, live-forever peripheral object: trivial destructor
+		 * (no static-destructor/atexit overhead). Non-copyable/non-movable so
+		 * two objects can never alias or re-init the same peripheral. */
 		~TIM() = default;
 
-		/* Prevent accidental copies that would re-init same peripheral */
 		TIM(const TIM&)            = delete;
 
 		TIM& operator=(const TIM&) = delete;
