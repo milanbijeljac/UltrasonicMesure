@@ -31,6 +31,15 @@ namespace Driver
 
 		~USART() = default;
 
+		/* Prevent accidental copies that would re-init same peripheral */
+		USART(const USART&)            = delete;
+
+		USART& operator=(const USART&) = delete;
+
+		USART(USART&&)                 = delete;
+
+		USART& operator=(USART&&)      = delete;
+
 	private:
 		void USART_v_Init();
 		void USART_v_EnableClock();

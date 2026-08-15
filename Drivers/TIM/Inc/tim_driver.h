@@ -20,6 +20,15 @@ namespace Driver
 		void Delay_v_ms (uint16 ms);
 		~TIM() = default;
 
+		/* Prevent accidental copies that would re-init same peripheral */
+		TIM(const TIM&)            = delete;
+
+		TIM& operator=(const TIM&) = delete;
+
+		TIM(TIM&&)                 = delete;
+
+		TIM& operator=(TIM&&)      = delete;
+
 	private:
 		void TIM_v_EnableClock();
 
@@ -51,6 +60,15 @@ namespace Driver
 		void GP_TIM_v_InputCaptureModeIRQHandling();
 		uint32 GP_TIM_u_GetCaptureValue () const { return m_captureDifference; };
 		~GP_TIM() = default;
+
+		/* Prevent accidental copies that would re-init same peripheral */
+		GP_TIM(const GP_TIM&)            = delete;
+
+		GP_TIM& operator=(const GP_TIM&) = delete;
+
+		GP_TIM(GP_TIM&&)                 = delete;
+
+		GP_TIM& operator=(GP_TIM&&)      = delete;
 
 	private:
 		uint32 m_autoReloadValue = 0;

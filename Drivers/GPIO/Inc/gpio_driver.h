@@ -112,7 +112,16 @@ namespace Driver
 		/** Method used to toggle pin */
 		void GPIO_v_TogglePin(GPIO_TypeDef *port, GpioPin m_GpioPin);
 
+		/* Prevent accidental copies that would re-init same peripheral */
 		~GPIO() = default;
+
+		GPIO(const GPIO&)            = delete;
+
+		GPIO& operator=(const GPIO&) = delete;
+
+		GPIO(GPIO&&)                 = delete;
+
+		GPIO& operator=(GPIO&&)      = delete;
 
 	private:
 		void GPIO_v_Init();
